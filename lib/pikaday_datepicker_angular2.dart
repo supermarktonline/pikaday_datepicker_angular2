@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:html';
 
 import 'package:angular2/core.dart';
@@ -28,8 +29,12 @@ class PikadayComponent implements AfterViewInit {
   @Input() String placeholder;
 
   PikadayParams _params = new PikadayParams();
+
+  final _onDayChange = new StreamController<DateTime>.broadcast();
   /// Emits selected dates.
-  @Output() EventEmitter<DateTime> dayChange = new EventEmitter();
+  @Output()
+  Stream<DateTime> get dayChange => _onDayChange.stream;
+
   /// Forwards to [PikadayParams.day]. Look there for more info.
   @Input() void set day(DateTime day) {
     _params.defaultDay = day;
@@ -138,6 +143,6 @@ class PikadayComponent implements AfterViewInit {
   @override
   ngAfterViewInit() {
     InputElement datepickerElem = querySelector('#$id');
-    upgradeInputToDatepicker(datepickerElem, dayChange.emit, _params);
+    upgradeInputToDatepicker(datepickerElem, _onDayChange.add, _params);
   }
 }
